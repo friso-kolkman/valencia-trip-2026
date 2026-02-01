@@ -1169,7 +1169,7 @@
       <div class="day-card saturday" onclick="toggleDay(this)">
         <div class="day-header">
           <span class="day-emoji">🏛️</span>
-          <div><div class="day-title">Zaterdag</div><div class="day-subtitle">Cultuur, eten & bezienswaardigheden</div></div>
+          <div><div class="day-title">Zaterdag</div><div class="day-subtitle">Cultuur & bezienswaardigheden</div></div>
           <span class="day-arrow">▼</span>
         </div>
         <div class="day-content">
@@ -1177,8 +1177,8 @@
             <li><span class="activity-time">09:00</span> Mercado Central — vers sap & jamón</li>
             <li><span class="activity-time">11:00</span> La Lonja de la Seda (UNESCO erfgoed)</li>
             <li><span class="activity-time">12:00</span> Kathedraal van Valencia + Miguelete Toren</li>
-            <li><span class="activity-time">14:00</span> Authentieke paella bij Casa Carmela</li>
-            <li><span class="activity-time">17:00</span> Stad van Kunsten en Wetenschappen</li>
+            <li><span class="activity-time">14:00</span> Lunch in oude centrum (tapas bij El Poblet of La Riuà)</li>
+            <li><span class="activity-time">16:30</span> Stad van Kunsten en Wetenschappen</li>
             <li><span class="activity-time">21:00</span> Diner & uitgaan in Ruzafa</li>
           </ul>
         </div>
@@ -1187,15 +1187,15 @@
       <div class="day-card sunday" onclick="toggleDay(this)">
         <div class="day-header">
           <span class="day-emoji">🏖️</span>
-          <div><div class="day-title">Zondag</div><div class="day-subtitle">Strand, parken & uitgaan</div></div>
+          <div><div class="day-title">Zondag</div><div class="day-subtitle">Strand, parken & paella</div></div>
           <span class="day-arrow">▼</span>
         </div>
         <div class="day-content">
           <ul class="activity-list">
-            <li><span class="activity-time">10:00</span> Fietsen door Turia Park</li>
-            <li><span class="activity-time">12:00</span> Verkennen van wijk Cabanyal</li>
-            <li><span class="activity-time">14:00</span> Visrestaurant Casa Montaña</li>
-            <li><span class="activity-time">16:00</span> Relaxen op Malvarrosa strand</li>
+            <li><span class="activity-time">10:00</span> Fietsen door Turia Park richting strand</li>
+            <li><span class="activity-time">12:00</span> Verkennen van wijk Cabanyal (street art)</li>
+            <li><span class="activity-time">14:00</span> Authentieke paella bij Casa Carmela 🥘</li>
+            <li><span class="activity-time">16:30</span> Relaxen op Malvarrosa strand</li>
             <li><span class="activity-time">19:00</span> Rooftop drankjes bij Ateneo Sky Bar</li>
             <li><span class="activity-time">22:00</span> Uitgaan in El Carmen</li>
           </ul>
@@ -2164,7 +2164,7 @@ const routes = {
       [39.4743, -0.3787], // Mercado Central
       [39.4741, -0.3793], // La Lonja
       [39.4752, -0.3754], // Cathedral
-      [39.4662, -0.3263], // Casa Carmela
+      [39.4745, -0.3765], // Lunch old town
       [39.4542, -0.3507], // City of Arts & Sciences
       [39.4631, -0.3733], // Ruzafa
     ],
@@ -2172,8 +2172,8 @@ const routes = {
       { coords: [39.4743, -0.3787], name: 'Mercado Central', time: '09:00' },
       { coords: [39.4741, -0.3793], name: 'La Lonja de la Seda', time: '11:00' },
       { coords: [39.4752, -0.3754], name: 'Kathedraal', time: '12:00' },
-      { coords: [39.4662, -0.3263], name: 'Casa Carmela (Paella)', time: '14:00' },
-      { coords: [39.4542, -0.3507], name: 'Stad van Kunsten', time: '17:00' },
+      { coords: [39.4745, -0.3765], name: 'Lunch oude centrum', time: '14:00' },
+      { coords: [39.4542, -0.3507], name: 'Stad van Kunsten', time: '16:30' },
       { coords: [39.4631, -0.3733], name: 'Ruzafa', time: '21:00' },
     ]
   },
@@ -2184,16 +2184,16 @@ const routes = {
       hotelCoords,
       [39.4799, -0.3623], // Turia Park
       [39.4695, -0.3258], // Cabanyal
-      [39.4731, -0.3685], // Casa Montaña
+      [39.4662, -0.3263], // Casa Carmela
       [39.4728, -0.3251], // Malvarrosa Beach
       [39.4721, -0.3752], // Ateneo Sky Bar
       [39.4785, -0.3812], // El Carmen
     ],
     stops: [
       { coords: [39.4799, -0.3623], name: 'Turia Park', time: '10:00' },
-      { coords: [39.4695, -0.3258], name: 'Cabanyal', time: '12:00' },
-      { coords: [39.4731, -0.3685], name: 'Casa Montaña', time: '14:00' },
-      { coords: [39.4728, -0.3251], name: 'Malvarrosa Strand', time: '16:00' },
+      { coords: [39.4695, -0.3258], name: 'Cabanyal (street art)', time: '12:00' },
+      { coords: [39.4662, -0.3263], name: 'Casa Carmela (Paella!)', time: '14:00' },
+      { coords: [39.4728, -0.3251], name: 'Malvarrosa Strand', time: '16:30' },
       { coords: [39.4721, -0.3752], name: 'Ateneo Sky Bar', time: '19:00' },
       { coords: [39.4785, -0.3812], name: 'El Carmen', time: '22:00' },
     ]
