@@ -1,0 +1,1439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valencia Weekendje - Feb 2026</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, #ff6b35 0%, #f7931e 50%, #ffcc02 100%);
+    min-height: 100vh;
+    padding: 30px;
+  }
+
+  .container { max-width: 1400px; margin: 0 auto; }
+
+  .header { text-align: center; color: white; margin-bottom: 30px; }
+  .header h1 { font-family: 'Playfair Display', serif; font-size: 3.2rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); margin-bottom: 10px; }
+  .header .subtitle { font-size: 1.2rem; opacity: 0.95; font-weight: 300; }
+
+  .main-grid { display: grid; grid-template-columns: 1fr 380px; gap: 25px; }
+
+  @media (max-width: 900px) {
+    .main-grid { grid-template-columns: 1fr; }
+  }
+
+  .card { background: white; border-radius: 20px; padding: 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.15); }
+
+  .weather-card {
+    display: flex; align-items: center; justify-content: space-around; flex-wrap: wrap; gap: 20px;
+    margin-bottom: 25px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;
+  }
+  .weather-main { text-align: center; }
+  .weather-temp { font-size: 3.5rem; font-weight: 600; }
+  .weather-desc { font-size: 1rem; opacity: 0.9; text-transform: capitalize; }
+  .weather-city { font-size: 1.3rem; font-weight: 500; margin-bottom: 5px; }
+  .weather-icon { font-size: 4rem; }
+  .weather-details { display: flex; gap: 25px; }
+  .weather-detail { text-align: center; }
+  .weather-detail-value { font-size: 1.3rem; font-weight: 600; }
+  .weather-detail-label { font-size: 0.75rem; opacity: 0.8; }
+
+  .itinerary-section h2 { font-family: 'Playfair Display', serif; color: #333; margin-bottom: 20px; font-size: 1.6rem; }
+
+  .day-card { background: #f8f9fa; border-radius: 15px; padding: 18px; margin-bottom: 15px; border-left: 5px solid; }
+  .day-card.friday { border-color: #ff6b35; }
+  .day-card.saturday { border-color: #f7931e; }
+  .day-card.sunday { border-color: #ffcc02; }
+  .day-card.monday { border-color: #667eea; }
+
+  .day-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .day-emoji { font-size: 1.6rem; }
+  .day-title { font-weight: 600; font-size: 1.1rem; color: #333; }
+  .day-subtitle { font-size: 0.8rem; color: #666; font-weight: 400; }
+
+  .activity-list { list-style: none; }
+  .activity-list li { padding: 6px 0; border-bottom: 1px solid #e9ecef; font-size: 0.88rem; color: #444; display: flex; align-items: flex-start; gap: 8px; }
+  .activity-list li:last-child { border-bottom: none; }
+  .activity-time { font-weight: 600; color: #888; min-width: 55px; font-size: 0.8rem; }
+
+  .sidebar { display: flex; flex-direction: column; gap: 20px; }
+
+  #map { height: 300px; border-radius: 15px; z-index: 1; }
+
+  .map-card h3, .tips-card h3, .clothing-card h3 { font-family: 'Playfair Display', serif; margin-bottom: 12px; color: #333; font-size: 1.2rem; }
+
+  .clothing-day { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; border-bottom: 1px solid #eee; }
+  .clothing-day:last-child { border-bottom: none; }
+  .clothing-day-info { flex: 1; }
+  .clothing-day-name { font-weight: 600; font-size: 0.85rem; color: #333; }
+  .clothing-day-weather { font-size: 0.75rem; color: #888; margin: 2px 0; }
+  .clothing-day-items { font-size: 0.8rem; color: #555; }
+  .clothing-icon { font-size: 1.8rem; min-width: 35px; text-align: center; }
+
+  .tip { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-bottom: 1px solid #eee; }
+  .tip:last-child { border-bottom: none; }
+  .tip-icon { font-size: 1.1rem; }
+  .tip-text { font-size: 0.85rem; color: #555; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .legend-item { display: flex; align-items: center; gap: 5px; font-size: 0.7rem; color: #666; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .legend-dot.food { background: #e74c3c; }
+  .legend-dot.culture { background: #3498db; }
+  .legend-dot.nightlife { background: #9b59b6; }
+  .legend-dot.nature { background: #27ae60; }
+  .legend-dot.hotel { background: #f39c12; }
+
+  .footer { text-align: center; color: white; margin-top: 25px; opacity: 0.9; font-size: 0.85rem; }
+
+  /* Extra Info Grid */
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 25px;
+  }
+
+  .info-card {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+  }
+
+  .info-card h3 {
+    font-family: 'Playfair Display', serif;
+    color: #333;
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Budget Section */
+  .budget-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+    font-size: 0.85rem;
+  }
+
+  .budget-item:last-child { border-bottom: none; }
+
+  .budget-label { color: #555; }
+
+  .budget-amount { font-weight: 600; color: #333; }
+
+  .budget-total {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 2px solid #f7931e;
+    font-weight: 600;
+    font-size: 1rem;
+  }
+
+  /* Packing List */
+  .pack-category {
+    margin-bottom: 15px;
+  }
+
+  .pack-category-title {
+    font-weight: 600;
+    font-size: 0.8rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+  }
+
+  .pack-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 0;
+    font-size: 0.85rem;
+    color: #444;
+    cursor: pointer;
+  }
+
+  .pack-item input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #27ae60;
+  }
+
+  .pack-item.checked label {
+    text-decoration: line-through;
+    color: #aaa;
+  }
+
+  /* Phrases */
+  .phrase-item {
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+  }
+
+  .phrase-item:last-child { border-bottom: none; }
+
+  .phrase-spanish {
+    font-weight: 600;
+    color: #333;
+    font-size: 0.95rem;
+  }
+
+  .phrase-dutch {
+    font-size: 0.8rem;
+    color: #888;
+    margin-top: 2px;
+  }
+
+  .phrase-pronunciation {
+    font-size: 0.75rem;
+    color: #e74c3c;
+    font-style: italic;
+    margin-top: 2px;
+  }
+
+  /* Photo Spots */
+  .photo-spot {
+    display: flex;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .photo-spot:hover {
+    background: #f8f9fa;
+    margin: 0 -10px;
+    padding: 10px;
+    border-radius: 8px;
+  }
+
+  .photo-spot:last-child { border-bottom: none; }
+
+  .photo-spot-icon { font-size: 1.5rem; }
+
+  .photo-spot-info { flex: 1; }
+
+  .photo-spot-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #333;
+  }
+
+  .photo-spot-tip {
+    font-size: 0.75rem;
+    color: #888;
+  }
+
+  .photo-spot-time {
+    font-size: 0.7rem;
+    color: #f7931e;
+    font-weight: 500;
+  }
+
+  /* Transport */
+  .transport-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+  }
+
+  .transport-item:last-child { border-bottom: none; }
+
+  .transport-icon { font-size: 1.3rem; }
+
+  .transport-info { flex: 1; }
+
+  .transport-title {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #333;
+  }
+
+  .transport-detail {
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 2px;
+  }
+
+  /* Emergency */
+  .emergency-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    background: #fff5f5;
+    border-radius: 8px;
+    margin-bottom: 8px;
+  }
+
+  .emergency-item:last-child { margin-bottom: 0; }
+
+  .emergency-icon { font-size: 1.3rem; }
+
+  .emergency-info { flex: 1; }
+
+  .emergency-title {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: #333;
+  }
+
+  .emergency-number {
+    font-size: 1rem;
+    color: #e74c3c;
+    font-weight: 600;
+  }
+
+  .emergency-number a {
+    color: #e74c3c;
+    text-decoration: none;
+  }
+
+  /* Spotify */
+  .spotify-embed {
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  /* QR Code */
+  .qr-section {
+    text-align: center;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    margin-top: 15px;
+  }
+
+  .qr-code {
+    width: 120px;
+    height: 120px;
+    margin: 10px auto;
+    background: white;
+    padding: 8px;
+    border-radius: 8px;
+  }
+
+  .qr-text {
+    font-size: 0.75rem;
+    color: #888;
+  }
+
+  /* Hidden Gems Section */
+  .gems-section {
+    margin-top: 25px;
+    margin-bottom: 10px;
+  }
+
+  .gems-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+
+  .gems-header h2 {
+    font-family: 'Playfair Display', serif;
+    color: white;
+    font-size: 1.6rem;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+  }
+
+  .gems-controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .gem-filter {
+    padding: 8px 16px;
+    border: 2px solid white;
+    background: transparent;
+    color: white;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+
+  .gem-filter:hover, .gem-filter.active {
+    background: white;
+    color: #f7931e;
+  }
+
+  .surprise-btn {
+    padding: 8px 20px;
+    background: white;
+    color: #e74c3c;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.2s;
+    animation: pulse 2s infinite;
+  }
+
+  .surprise-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  }
+
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0.4); }
+    50% { box-shadow: 0 0 0 8px rgba(255,255,255,0); }
+  }
+
+  .gems-scroll-container {
+    overflow-x: auto;
+    padding-bottom: 15px;
+    margin: 0 -10px;
+    padding: 0 10px 15px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.5) transparent;
+  }
+
+  .gems-scroll-container::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .gems-scroll-container::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.2);
+    border-radius: 3px;
+  }
+
+  .gems-scroll-container::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.5);
+    border-radius: 3px;
+  }
+
+  .gems-list {
+    display: flex;
+    gap: 15px;
+    padding: 5px 0;
+  }
+
+  .gem-card {
+    flex: 0 0 280px;
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+  }
+
+  .gem-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 35px rgba(0,0,0,0.2);
+  }
+
+  .gem-card.highlighted {
+    animation: highlight 0.6s ease;
+    box-shadow: 0 0 0 4px #e74c3c, 0 12px 35px rgba(0,0,0,0.25);
+  }
+
+  @keyframes highlight {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.03); }
+  }
+
+  .gem-category-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .gem-category-badge.eten { background: #e74c3c; color: white; }
+  .gem-category-badge.drinken { background: #9b59b6; color: white; }
+  .gem-category-badge.cultuur { background: #3498db; color: white; }
+  .gem-category-badge.natuur { background: #27ae60; color: white; }
+  .gem-category-badge.winkelen { background: #f39c12; color: white; }
+
+  .gem-image {
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  }
+
+  .gem-content {
+    padding: 15px;
+  }
+
+  .gem-name {
+    font-weight: 600;
+    font-size: 1rem;
+    color: #333;
+    margin-bottom: 4px;
+  }
+
+  .gem-neighborhood {
+    font-size: 0.75rem;
+    color: #888;
+    margin-bottom: 8px;
+  }
+
+  .gem-description {
+    font-size: 0.82rem;
+    color: #555;
+    line-height: 1.4;
+    margin-bottom: 10px;
+  }
+
+  .gem-local-tip {
+    font-size: 0.75rem;
+    color: #e74c3c;
+    font-style: italic;
+    padding-top: 8px;
+    border-top: 1px solid #eee;
+  }
+
+  .gem-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .gem-btn {
+    flex: 1;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    text-align: center;
+  }
+
+  .gem-btn-maps {
+    background: #4285f4;
+    color: white;
+  }
+
+  .gem-btn-maps:hover {
+    background: #3367d6;
+  }
+
+  .gem-btn-save {
+    background: #f8f9fa;
+    color: #333;
+    border: 1px solid #ddd;
+  }
+
+  .gem-btn-save:hover {
+    background: #e9ecef;
+  }
+
+  .gem-btn-save.saved {
+    background: #27ae60;
+    color: white;
+    border-color: #27ae60;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header class="header">
+    <h1>Valencia Weekendje</h1>
+    <p class="subtitle">7-10 februari 2026 | Romantisch uitje</p>
+  </header>
+
+  <div class="card weather-card" id="weather-container">
+    <div class="weather-main">
+      <div class="weather-city">Valencia, Spanje</div>
+      <div class="weather-temp" id="weather-temp">--°C</div>
+      <div class="weather-desc" id="weather-desc">Weer laden...</div>
+    </div>
+    <div class="weather-icon" id="weather-icon">🌤️</div>
+    <div class="weather-details">
+      <div class="weather-detail">
+        <div class="weather-detail-value" id="weather-humidity">--%</div>
+        <div class="weather-detail-label">Luchtvochtigheid</div>
+      </div>
+      <div class="weather-detail">
+        <div class="weather-detail-value" id="weather-wind">-- km/u</div>
+        <div class="weather-detail-label">Wind</div>
+      </div>
+      <div class="weather-detail">
+        <div class="weather-detail-value" id="weather-feels">--°C</div>
+        <div class="weather-detail-label">Gevoelstemperatuur</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-grid">
+    <div class="itinerary-section">
+      <h2>Ons 4-daags programma</h2>
+
+      <div class="day-card friday">
+        <div class="day-header">
+          <span class="day-emoji">🍷</span>
+          <div><div class="day-title">Vrijdagavond</div><div class="day-subtitle">Aankomst & eerste indrukken</div></div>
+        </div>
+        <ul class="activity-list">
+          <li><span class="activity-time">Avond</span> Inchecken bij ESTIMAR Valencia (oude centrum)</li>
+          <li><span class="activity-time">19:00</span> Wandeling door Plaza de la Virgen & Plaza de la Reina</li>
+          <li><span class="activity-time">21:00</span> Tapas eten bij La Pepica of El Carmen</li>
+          <li><span class="activity-time">23:00</span> Drankjes in Barrio del Carmen</li>
+        </ul>
+      </div>
+
+      <div class="day-card saturday">
+        <div class="day-header">
+          <span class="day-emoji">🏛️</span>
+          <div><div class="day-title">Zaterdag</div><div class="day-subtitle">Cultuur, eten & bezienswaardigheden</div></div>
+        </div>
+        <ul class="activity-list">
+          <li><span class="activity-time">09:00</span> Mercado Central — vers sap & jamón</li>
+          <li><span class="activity-time">11:00</span> La Lonja de la Seda (UNESCO erfgoed)</li>
+          <li><span class="activity-time">12:00</span> Kathedraal van Valencia + Miguelete Toren</li>
+          <li><span class="activity-time">14:00</span> Authentieke paella bij Casa Carmela</li>
+          <li><span class="activity-time">17:00</span> Stad van Kunsten en Wetenschappen</li>
+          <li><span class="activity-time">21:00</span> Diner & uitgaan in Ruzafa</li>
+        </ul>
+      </div>
+
+      <div class="day-card sunday">
+        <div class="day-header">
+          <span class="day-emoji">🏖️</span>
+          <div><div class="day-title">Zondag</div><div class="day-subtitle">Strand, parken & uitgaan</div></div>
+        </div>
+        <ul class="activity-list">
+          <li><span class="activity-time">10:00</span> Fietsen door Turia Park</li>
+          <li><span class="activity-time">12:00</span> Verkennen van wijk Cabanyal</li>
+          <li><span class="activity-time">14:00</span> Visrestaurant Casa Montaña</li>
+          <li><span class="activity-time">16:00</span> Relaxen op Malvarrosa strand</li>
+          <li><span class="activity-time">19:00</span> Rooftop drankjes bij Ateneo Sky Bar</li>
+          <li><span class="activity-time">22:00</span> Uitgaan in El Carmen</li>
+        </ul>
+      </div>
+
+      <div class="day-card monday">
+        <div class="day-header">
+          <span class="day-emoji">☀️</span>
+          <div><div class="day-title">Maandagochtend</div><div class="day-subtitle">Laatste hapjes & vertrek</div></div>
+        </div>
+        <ul class="activity-list">
+          <li><span class="activity-time">10:00</span> Brunch bij Bluebell Coffee</li>
+          <li><span class="activity-time">11:30</span> Laatste wandeling, souvenirs (horchata, turrón)</li>
+          <li><span class="activity-time">13:00</span> Naar het vliegveld</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="sidebar">
+      <div class="card map-card">
+        <h3>📍 Belangrijke locaties</h3>
+        <div id="map"></div>
+        <div class="legend">
+          <div class="legend-item"><span class="legend-dot hotel"></span> Hotel</div>
+          <div class="legend-item"><span class="legend-dot food"></span> Eten</div>
+          <div class="legend-item"><span class="legend-dot culture"></span> Cultuur</div>
+          <div class="legend-item"><span class="legend-dot nightlife"></span> Uitgaan</div>
+          <div class="legend-item"><span class="legend-dot nature"></span> Natuur</div>
+        </div>
+      </div>
+
+      <div class="card tips-card">
+        <h3>💡 Handige tips</h3>
+        <div class="tip"><span class="tip-icon">🚶</span><span class="tip-text">Oude centrum is goed te belopen — huur fietsen voor Turia/strand</span></div>
+        <div class="tip"><span class="tip-icon">🥘</span><span class="tip-text">Paella is een lunch gerecht — paella bij diner = toeristenval!</span></div>
+        <div class="tip"><span class="tip-icon">🕐</span><span class="tip-text">Spanjaarden eten laat: lunch 14:00, diner 21:00+</span></div>
+        <div class="tip"><span class="tip-icon">🍊</span><span class="tip-text">Probeer horchata & fartons — lokale specialiteit!</span></div>
+      </div>
+
+      <div class="card clothing-card">
+        <h3>👔 Wat aan te trekken</h3>
+        <p style="font-size:0.7rem;color:#888;margin-bottom:10px;">🔄 Live voorspelling — update automatisch</p>
+        <div id="clothing-recommendations">
+          <div class="clothing-day">
+            <span class="clothing-icon">⏳</span>
+            <div class="clothing-day-info">
+              <div class="clothing-day-name">Voorspelling laden...</div>
+              <div class="clothing-day-weather">Weerdata ophalen</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hidden Gems Section -->
+  <div class="gems-section">
+    <div class="gems-header">
+      <h2>💎 Hidden Gems — Waar locals heen gaan</h2>
+      <div class="gems-controls">
+        <button class="gem-filter active" data-filter="all">Alles</button>
+        <button class="gem-filter" data-filter="eten">🍴 Eten</button>
+        <button class="gem-filter" data-filter="drinken">🍷 Drinken</button>
+        <button class="gem-filter" data-filter="cultuur">🎨 Cultuur</button>
+        <button class="gem-filter" data-filter="natuur">🌿 Natuur</button>
+        <button class="surprise-btn" onclick="surpriseMe()">🎲 Verras ons!</button>
+      </div>
+    </div>
+    <div class="gems-scroll-container">
+      <div class="gems-list" id="gems-list">
+        <!-- Gems worden via JavaScript geladen -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Extra Info Grid -->
+  <div class="info-grid">
+
+    <!-- Budget -->
+    <div class="info-card">
+      <h3>💰 Budget Overzicht</h3>
+      <div class="budget-item">
+        <span class="budget-label">🏨 Hotel (3 nachten ESTIMAR)</span>
+        <span class="budget-amount">~€450</span>
+      </div>
+      <div class="budget-item">
+        <span class="budget-label">✈️ Vluchten (retour p.p.)</span>
+        <span class="budget-amount">~€150</span>
+      </div>
+      <div class="budget-item">
+        <span class="budget-label">🍽️ Eten & drinken (4 dagen)</span>
+        <span class="budget-amount">~€300</span>
+      </div>
+      <div class="budget-item">
+        <span class="budget-label">🎫 Activiteiten & entree</span>
+        <span class="budget-amount">~€60</span>
+      </div>
+      <div class="budget-item">
+        <span class="budget-label">🚕 Transport (metro/taxi)</span>
+        <span class="budget-amount">~€40</span>
+      </div>
+      <div class="budget-item budget-total">
+        <span class="budget-label">Totaal geschat (voor 2)</span>
+        <span class="budget-amount" style="color:#27ae60;">~€1.000</span>
+      </div>
+      <p style="font-size:0.7rem;color:#888;margin-top:10px;">💡 Tip: Lunch is goedkoper dan diner. Paella ~€15 p.p. bij lunch!</p>
+    </div>
+
+    <!-- Packing List -->
+    <div class="info-card">
+      <h3>📋 Paklijst</h3>
+      <div class="pack-category">
+        <div class="pack-category-title">Kleding</div>
+        <div class="pack-item"><input type="checkbox" id="p1"><label for="p1">Lichte jas / vest</label></div>
+        <div class="pack-item"><input type="checkbox" id="p2"><label for="p2">Comfortabele wandelschoenen</label></div>
+        <div class="pack-item"><input type="checkbox" id="p3"><label for="p3">Uitgaanskleding</label></div>
+        <div class="pack-item"><input type="checkbox" id="p4"><label for="p4">Zwemkleding</label></div>
+        <div class="pack-item"><input type="checkbox" id="p5"><label for="p5">Zonnebril</label></div>
+      </div>
+      <div class="pack-category">
+        <div class="pack-category-title">Essentials</div>
+        <div class="pack-item"><input type="checkbox" id="p6"><label for="p6">Paspoort / ID</label></div>
+        <div class="pack-item"><input type="checkbox" id="p7"><label for="p7">Telefoon + oplader</label></div>
+        <div class="pack-item"><input type="checkbox" id="p8"><label for="p8">Bankpas + creditcard</label></div>
+        <div class="pack-item"><input type="checkbox" id="p9"><label for="p9">Paraplu (compact)</label></div>
+        <div class="pack-item"><input type="checkbox" id="p10"><label for="p10">Zonnebrand</label></div>
+      </div>
+    </div>
+
+    <!-- Transport -->
+    <div class="info-card">
+      <h3>🚇 Transport</h3>
+      <div class="transport-item">
+        <span class="transport-icon">✈️</span>
+        <div class="transport-info">
+          <div class="transport-title">Vliegveld → Centrum</div>
+          <div class="transport-detail">Metro lijn 3 of 5 → Colón (€5, ~25 min)</div>
+          <div class="transport-detail">Taxi ~€20-25 (15 min)</div>
+        </div>
+      </div>
+      <div class="transport-item">
+        <span class="transport-icon">🚇</span>
+        <div class="transport-info">
+          <div class="transport-title">Metro Valencia</div>
+          <div class="transport-detail">Enkele rit €1.50 | Dagkaart €4.50</div>
+          <div class="transport-detail">Dichtsbij hotel: Metro Colón (L3, L9)</div>
+        </div>
+      </div>
+      <div class="transport-item">
+        <span class="transport-icon">🚲</span>
+        <div class="transport-info">
+          <div class="transport-title">Fietsen huren</div>
+          <div class="transport-detail">Valenbisi (deelfietsen) €13/week</div>
+          <div class="transport-detail">Perfect voor Turia Park & strand!</div>
+        </div>
+      </div>
+      <div class="transport-item">
+        <span class="transport-icon">🚕</span>
+        <div class="transport-info">
+          <div class="transport-title">Taxi</div>
+          <div class="transport-detail">Free Now / Cabify app werkt hier</div>
+          <div class="transport-detail">Centrum → Strand ~€8-10</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Emergency -->
+    <div class="info-card">
+      <h3>🆘 Noodgevallen</h3>
+      <div class="emergency-item">
+        <span class="emergency-icon">🚨</span>
+        <div class="emergency-info">
+          <div class="emergency-title">Algemeen noodnummer</div>
+          <div class="emergency-number"><a href="tel:112">112</a></div>
+        </div>
+      </div>
+      <div class="emergency-item">
+        <span class="emergency-icon">🏥</span>
+        <div class="emergency-info">
+          <div class="emergency-title">Ziekenhuis (Hospital La Fe)</div>
+          <div class="emergency-number"><a href="tel:+34961244000">+34 961 244 000</a></div>
+        </div>
+      </div>
+      <div class="emergency-item">
+        <span class="emergency-icon">🇳🇱</span>
+        <div class="emergency-info">
+          <div class="emergency-title">Nederlandse Ambassade Madrid</div>
+          <div class="emergency-number"><a href="tel:+34913536200">+34 91 353 6200</a></div>
+        </div>
+      </div>
+      <div class="emergency-item">
+        <span class="emergency-icon">👮</span>
+        <div class="emergency-info">
+          <div class="emergency-title">Politie (niet-spoed)</div>
+          <div class="emergency-number"><a href="tel:091">091</a></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Spanish Phrases -->
+    <div class="info-card">
+      <h3>🇪🇸 Handige Spaanse Zinnen</h3>
+      <div class="phrase-item">
+        <div class="phrase-spanish">Hola, una mesa para dos, por favor</div>
+        <div class="phrase-dutch">Hallo, een tafel voor twee, alstublieft</div>
+        <div class="phrase-pronunciation">O-la, oe-na mé-sa pa-ra dos, por fa-vor</div>
+      </div>
+      <div class="phrase-item">
+        <div class="phrase-spanish">La cuenta, por favor</div>
+        <div class="phrase-dutch">De rekening, alstublieft</div>
+        <div class="phrase-pronunciation">La kwen-ta, por fa-vor</div>
+      </div>
+      <div class="phrase-item">
+        <div class="phrase-spanish">¿Qué nos recomienda?</div>
+        <div class="phrase-dutch">Wat raadt u aan?</div>
+        <div class="phrase-pronunciation">Ké nos re-ko-mjen-da?</div>
+      </div>
+      <div class="phrase-item">
+        <div class="phrase-spanish">Dos cervezas, por favor</div>
+        <div class="phrase-dutch">Twee biertjes, alstublieft</div>
+        <div class="phrase-pronunciation">Dos ser-vé-sas, por fa-vor</div>
+      </div>
+      <div class="phrase-item">
+        <div class="phrase-spanish">¿Dónde está...?</div>
+        <div class="phrase-dutch">Waar is...?</div>
+        <div class="phrase-pronunciation">Dón-de es-tá...?</div>
+      </div>
+      <div class="phrase-item">
+        <div class="phrase-spanish">¡Qué rico! / ¡Muy bueno!</div>
+        <div class="phrase-dutch">Wat lekker! / Erg goed!</div>
+        <div class="phrase-pronunciation">Ké rí-ko! / Moei bwé-no!</div>
+      </div>
+    </div>
+
+    <!-- Photo Spots -->
+    <div class="info-card">
+      <h3>📸 Beste Foto Spots</h3>
+      <div class="photo-spot" onclick="showPhotoSpot([39.4542, -0.3507], 'City of Arts & Sciences')">
+        <span class="photo-spot-icon">🏛️</span>
+        <div class="photo-spot-info">
+          <div class="photo-spot-name">City of Arts & Sciences</div>
+          <div class="photo-spot-tip">Reflectie in het water, futuristische architectuur</div>
+          <div class="photo-spot-time">🌅 Beste: zonsondergang of blauw uurtje</div>
+        </div>
+      </div>
+      <div class="photo-spot" onclick="showPhotoSpot([39.4752, -0.3754], 'Plaza de la Virgen')">
+        <span class="photo-spot-icon">⛪</span>
+        <div class="photo-spot-info">
+          <div class="photo-spot-name">Plaza de la Virgen</div>
+          <div class="photo-spot-tip">Fontein + kathedraal, authentiek Valencia</div>
+          <div class="photo-spot-time">☀️ Beste: ochtendlicht of avond</div>
+        </div>
+      </div>
+      <div class="photo-spot" onclick="showPhotoSpot([39.4695, -0.3258], 'Cabanyal straten')">
+        <span class="photo-spot-icon">🎨</span>
+        <div class="photo-spot-info">
+          <div class="photo-spot-name">Cabanyal Street Art</div>
+          <div class="photo-spot-tip">Kleurrijke tegels en muurschilderingen</div>
+          <div class="photo-spot-time">📷 Beste: bewolkt (geen harde schaduwen)</div>
+        </div>
+      </div>
+      <div class="photo-spot" onclick="showPhotoSpot([39.4728, -0.3251], 'Malvarrosa strand')">
+        <span class="photo-spot-icon">🏖️</span>
+        <div class="photo-spot-info">
+          <div class="photo-spot-name">Malvarrosa Beach</div>
+          <div class="photo-spot-tip">Palmbomen, promenade, zee</div>
+          <div class="photo-spot-time">🌅 Beste: zonsopgang (rustig!)</div>
+        </div>
+      </div>
+      <div class="photo-spot" onclick="showPhotoSpot([39.4743, -0.3787], 'Mercado Central')">
+        <span class="photo-spot-icon">🍊</span>
+        <div class="photo-spot-info">
+          <div class="photo-spot-name">Mercado Central</div>
+          <div class="photo-spot-tip">Art nouveau hal, kleurrijk fruit</div>
+          <div class="photo-spot-time">🕐 Beste: 's ochtends (drukte!)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Spotify Playlist -->
+    <div class="info-card">
+      <h3>🎵 Valencia Playlist</h3>
+      <p style="font-size:0.8rem;color:#666;margin-bottom:12px;">Spaanse sfeer voor onderweg! ☀️</p>
+      <div class="spotify-embed">
+        <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/37i9dQZF1DX5HBBUIpXGY0?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+      </div>
+      <div class="qr-section">
+        <div class="qr-text">📱 Deel deze pagina met je vriendin:</div>
+        <img class="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=https://valencia-trip-2026.loca.lt" alt="QR Code">
+        <div class="qr-text" style="margin-top:5px;font-weight:500;">Scan om te openen</div>
+        <div class="qr-text">Wachtwoord: 82.174.164.149</div>
+      </div>
+    </div>
+
+    <!-- Reservations & Links -->
+    <div class="info-card">
+      <h3>🔗 Reserveren & Boeken</h3>
+      <div class="transport-item">
+        <span class="transport-icon">🥘</span>
+        <div class="transport-info">
+          <div class="transport-title">Casa Carmela (Paella)</div>
+          <div class="transport-detail">Reserveren aanbevolen voor weekend!</div>
+          <a href="tel:+34963710073" style="font-size:0.85rem;color:#4285f4;">📞 +34 963 71 00 73</a>
+        </div>
+      </div>
+      <div class="transport-item">
+        <span class="transport-icon">🎟️</span>
+        <div class="transport-info">
+          <div class="transport-title">Oceanogràfic (optioneel)</div>
+          <div class="transport-detail">Online tickets = geen wachtrij</div>
+          <a href="https://www.oceanografic.org/en/" target="_blank" style="font-size:0.85rem;color:#4285f4;">🌐 Tickets kopen</a>
+        </div>
+      </div>
+      <div class="transport-item">
+        <span class="transport-icon">🚲</span>
+        <div class="transport-info">
+          <div class="transport-title">Valenbisi Fietsen</div>
+          <div class="transport-detail">Registreer online voor €13/week</div>
+          <a href="https://www.valenbisi.es/" target="_blank" style="font-size:0.85rem;color:#4285f4;">🌐 Aanmelden</a>
+        </div>
+      </div>
+      <div class="transport-item">
+        <span class="transport-icon">🚕</span>
+        <div class="transport-info">
+          <div class="transport-title">Taxi Apps</div>
+          <div class="transport-detail">Download alvast:</div>
+          <div style="font-size:0.85rem;color:#4285f4;">Free Now • Cabify</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer">Gemaakt met ❤️ voor jullie Valencia avontuur</div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// Initialize map
+const map = L.map('map').setView([39.4699, -0.3763], 13);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '© OpenStreetMap'
+}).addTo(map);
+
+// Custom marker icons
+const createIcon = (color) => L.divIcon({
+  className: 'custom-marker',
+  html: `<div style="background:${color};width:24px;height:24px;border-radius:50%;border:3px solid white;box-shadow:0 2px 5px rgba(0,0,0,0.3);"></div>`,
+  iconSize: [24, 24],
+  iconAnchor: [12, 12]
+});
+
+const hotelIcon = createIcon('#f39c12');
+const foodIcon = createIcon('#e74c3c');
+const cultureIcon = createIcon('#3498db');
+const nightlifeIcon = createIcon('#9b59b6');
+const natureIcon = createIcon('#27ae60');
+
+// Add markers
+const locations = [
+  { coords: [39.4705, -0.3742], name: 'ESTIMAR Valencia (Hotel)', icon: hotelIcon },
+  { coords: [39.4737, -0.3757], name: 'Plaza de la Virgen', icon: cultureIcon },
+  { coords: [39.4743, -0.3787], name: 'Mercado Central', icon: cultureIcon },
+  { coords: [39.4741, -0.3793], name: 'La Lonja de la Seda', icon: cultureIcon },
+  { coords: [39.4752, -0.3754], name: 'Valencia Cathedral', icon: cultureIcon },
+  { coords: [39.4542, -0.3507], name: 'City of Arts & Sciences', icon: cultureIcon },
+  { coords: [39.4662, -0.3263], name: 'Casa Carmela (Paella)', icon: foodIcon },
+  { coords: [39.4731, -0.3685], name: 'Casa Montaña', icon: foodIcon },
+  { coords: [39.4631, -0.3733], name: 'Ruzafa (Dining)', icon: foodIcon },
+  { coords: [39.4785, -0.3812], name: 'Barrio del Carmen', icon: nightlifeIcon },
+  { coords: [39.4721, -0.3752], name: 'Ateneo Sky Bar', icon: nightlifeIcon },
+  { coords: [39.4799, -0.3623], name: 'Turia Gardens', icon: natureIcon },
+  { coords: [39.4728, -0.3251], name: 'Malvarrosa Beach', icon: natureIcon },
+  { coords: [39.4692, -0.3244], name: 'Cabanyal', icon: natureIcon }
+];
+
+locations.forEach(loc => {
+  L.marker(loc.coords, { icon: loc.icon })
+    .addTo(map)
+    .bindPopup(`<strong>${loc.name}</strong>`);
+});
+
+// Weather code mapping (Dutch)
+const weatherMap = {
+  0: { desc: 'Onbewolkt', icon: '☀️' },
+  1: { desc: 'Overwegend helder', icon: '🌤️' },
+  2: { desc: 'Licht bewolkt', icon: '⛅' },
+  3: { desc: 'Bewolkt', icon: '☁️' },
+  45: { desc: 'Mistig', icon: '🌫️' },
+  48: { desc: 'Mistig', icon: '🌫️' },
+  51: { desc: 'Lichte motregen', icon: '🌦️' },
+  53: { desc: 'Motregen', icon: '🌦️' },
+  55: { desc: 'Zware motregen', icon: '🌧️' },
+  61: { desc: 'Lichte regen', icon: '🌧️' },
+  63: { desc: 'Regen', icon: '🌧️' },
+  65: { desc: 'Zware regen', icon: '🌧️' },
+  80: { desc: 'Regenbuien', icon: '🌦️' },
+  95: { desc: 'Onweer', icon: '⛈️' }
+};
+
+// Get clothing recommendation based on weather (Dutch)
+function getClothingRec(temp, weatherCode, dayType, rainChance) {
+  let items = [];
+  const isRainy = [51, 53, 55, 61, 63, 65, 80, 95].includes(weatherCode);
+  const highRainChance = rainChance > 40;
+
+  // Base layer
+  if (temp >= 18) {
+    items.push('T-shirt');
+  } else if (temp >= 14) {
+    items.push('Longsleeve');
+  } else {
+    items.push('Trui');
+  }
+
+  // Outer layer - fixed logic order
+  if (temp < 10) {
+    items.push('warme jas');
+  } else if (temp < 16) {
+    items.push('lichte jas');
+  }
+
+  // Rain gear
+  if (isRainy || highRainChance) {
+    items.push('paraplu');
+    if (isRainy) {
+      items.push('regenjas');
+    }
+  }
+
+  // Day-specific - check weather first!
+  if (dayType === 'beach') {
+    if (!isRainy && !highRainChance) {
+      items.push('zwemkleding');
+      items.push('zonnebril');
+    } else {
+      items.push('comfortabele schoenen');
+      items.push('reserveplan: museum of indoor activiteit');
+    }
+  } else if (dayType === 'nightlife') {
+    items.push('smart casual outfit');
+  } else if (dayType === 'walking') {
+    items.push('comfortabele schoenen');
+  }
+
+  // Sunglasses only when not rainy
+  if (temp >= 12 && !isRainy && !highRainChance && dayType !== 'beach') {
+    items.push('zonnebril');
+  }
+
+  return items.join(', ');
+}
+
+// Fetch current weather
+fetch('https://api.open-meteo.com/v1/forecast?latitude=39.47&longitude=-0.38&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&timezone=Europe/Madrid')
+  .then(res => res.json())
+  .then(data => {
+    const current = data.current;
+    const temp = Math.round(current.temperature_2m);
+    const feels = Math.round(current.apparent_temperature);
+    const humidity = current.relative_humidity_2m;
+    const wind = Math.round(current.wind_speed_10m);
+    const weatherCode = current.weather_code;
+    const weather = weatherMap[weatherCode] || { desc: 'Variable', icon: '🌤️' };
+
+    document.getElementById('weather-temp').textContent = temp + '°C';
+    document.getElementById('weather-desc').textContent = weather.desc;
+    document.getElementById('weather-icon').textContent = weather.icon;
+    document.getElementById('weather-humidity').textContent = humidity + '%';
+    document.getElementById('weather-wind').textContent = wind + ' km/u';
+    document.getElementById('weather-feels').textContent = feels + '°C';
+  })
+  .catch(() => {
+    document.getElementById('weather-desc').textContent = 'Weer niet beschikbaar';
+  });
+
+// Fetch 4-day forecast for clothing recommendations
+fetch('https://api.open-meteo.com/v1/forecast?latitude=39.47&longitude=-0.38&daily=temperature_2m_max,temperature_2m_min,weather_code,precipitation_probability_max&timezone=Europe/Madrid&forecast_days=7')
+  .then(res => res.json())
+  .then(data => {
+    const daily = data.daily;
+    const tripDays = [
+      { name: 'Vrijdag', subtitle: 'Avondwandeling & tapas', type: 'nightlife', idx: 0 },
+      { name: 'Zaterdag', subtitle: 'Cultuur & bezienswaardigheden', type: 'walking', idx: 1 },
+      { name: 'Zondag', subtitle: 'Strand & parken', type: 'beach', idx: 2 },
+      { name: 'Maandag', subtitle: 'Brunch & vertrek', type: 'walking', idx: 3 }
+    ];
+
+    let html = '';
+    tripDays.forEach(day => {
+      const idx = day.idx;
+      const maxTemp = Math.round(daily.temperature_2m_max[idx]);
+      const minTemp = Math.round(daily.temperature_2m_min[idx]);
+      const avgTemp = Math.round((maxTemp + minTemp) / 2);
+      const weatherCode = daily.weather_code[idx];
+      const rainChance = daily.precipitation_probability_max[idx];
+      const weather = weatherMap[weatherCode] || { desc: 'Variable', icon: '🌤️' };
+      const clothing = getClothingRec(avgTemp, weatherCode, day.type, rainChance);
+
+      html += `
+        <div class="clothing-day">
+          <span class="clothing-icon">${weather.icon}</span>
+          <div class="clothing-day-info">
+            <div class="clothing-day-name">${day.name} <span style="font-weight:400;color:#888;">— ${day.subtitle}</span></div>
+            <div class="clothing-day-weather">${minTemp}°–${maxTemp}°C · ${weather.desc}${rainChance > 30 ? ' · ' + rainChance + '% kans op regen' : ''}</div>
+            <div class="clothing-day-items">${clothing}</div>
+          </div>
+        </div>
+      `;
+    });
+
+    document.getElementById('clothing-recommendations').innerHTML = html;
+  })
+  .catch(() => {
+    document.getElementById('clothing-recommendations').innerHTML = `
+      <div class="clothing-day">
+        <span class="clothing-icon">🧥</span>
+        <div class="clothing-day-info">
+          <div class="clothing-day-name">Algemene inpaktips</div>
+          <div class="clothing-day-weather">Februari in Valencia: 10–17°C normaal</div>
+          <div class="clothing-day-items">Laagjes, lichte jas, comfortabele wandelschoenen, paraplu voor de zekerheid</div>
+        </div>
+      </div>
+    `;
+  });
+
+// ============ HIDDEN GEMS ============
+const hiddenGems = [
+  {
+    name: "Bar Ricardo",
+    category: "eten",
+    neighborhood: "El Carmen",
+    emoji: "🍳",
+    coords: [39.4781, -0.3798],
+    description: "Piepklein barretje met de beste tortilla van Valencia. Geen menu, gewoon wijzen naar wat je wilt.",
+    localTip: "Ga voor 13:00, anders is de tortilla op!",
+    maps: "https://maps.google.com/?q=Bar+Ricardo+Valencia"
+  },
+  {
+    name: "Horchatería Santa Catalina",
+    category: "eten",
+    neighborhood: "Ciutat Vella",
+    emoji: "🥛",
+    coords: [39.4738, -0.3771],
+    description: "Sinds 1836! De oudste horchatería van Valencia. Authentieke horchata met fartons.",
+    localTip: "Bestel 'horchata granizada' voor de echte ervaring.",
+    maps: "https://maps.google.com/?q=Horchateria+Santa+Catalina+Valencia"
+  },
+  {
+    name: "Bodega Casa Montaña",
+    category: "drinken",
+    neighborhood: "Cabanyal",
+    emoji: "🍷",
+    coords: [39.4731, -0.3685],
+    description: "Wijnbar uit 1836 met vaten aan de muur. Perfecte vermouth en conservas.",
+    localTip: "Vraag om 'clóchinas' (lokale mosselen) als ze er zijn.",
+    maps: "https://maps.google.com/?q=Casa+Montana+Valencia"
+  },
+  {
+    name: "El Kiosko",
+    category: "drinken",
+    neighborhood: "Turia Park",
+    emoji: "🍺",
+    coords: [39.4782, -0.3651],
+    description: "Relaxte buitenbar in het park. Locals komen hier na het hardlopen of fietsen.",
+    localTip: "Neem een Agua de Valencia — champagne met sinaasappel!",
+    maps: "https://maps.google.com/?q=El+Kiosko+Turia+Valencia"
+  },
+  {
+    name: "Mercado de Tapinería",
+    category: "eten",
+    neighborhood: "Ciutat Vella",
+    emoji: "🥘",
+    coords: [39.4755, -0.3768],
+    description: "Kleine foodhall met lokale producten. Minder toeristisch dan Mercado Central.",
+    localTip: "Probeer de 'esgarraet' bij de hoekbar.",
+    maps: "https://maps.google.com/?q=Mercado+de+Tapineria+Valencia"
+  },
+  {
+    name: "Jardín Botánico",
+    category: "natuur",
+    neighborhood: "Ciutat Vella",
+    emoji: "🌴",
+    coords: [39.4745, -0.3853],
+    description: "Verborgen botanische tuin met 200 jaar oude bomen. Oase van rust.",
+    localTip: "Perfecte plek voor een middagdutje op het gras.",
+    maps: "https://maps.google.com/?q=Jardin+Botanico+Valencia"
+  },
+  {
+    name: "Café de las Horas",
+    category: "drinken",
+    neighborhood: "El Carmen",
+    emoji: "🍸",
+    coords: [39.4773, -0.3785],
+    description: "Barokke cocktailbar met fluwelen stoelen en kroonluchters. Voelt als een tijdmachine.",
+    localTip: "Bestel de huiscocktail 'Agua de Valencia'.",
+    maps: "https://maps.google.com/?q=Cafe+de+las+Horas+Valencia"
+  },
+  {
+    name: "Russafa Markt",
+    category: "eten",
+    neighborhood: "Ruzafa",
+    emoji: "🍅",
+    coords: [39.4618, -0.3731],
+    description: "Lokale markt waar echte Valencianen hun groenten kopen. Geen toeristen!",
+    localTip: "Zaterdagochtend is het gezelligst.",
+    maps: "https://maps.google.com/?q=Mercado+de+Ruzafa+Valencia"
+  },
+  {
+    name: "IVAM",
+    category: "cultuur",
+    neighborhood: "El Carmen",
+    emoji: "🖼️",
+    coords: [39.4792, -0.3832],
+    description: "Modern kunstmuseum met gratis toegang. Vaak bijzondere tentoonstellingen.",
+    localTip: "Check hun website voor gratis rondleidingen.",
+    maps: "https://maps.google.com/?q=IVAM+Valencia"
+  },
+  {
+    name: "Playa del Saler",
+    category: "natuur",
+    neighborhood: "Albufera",
+    emoji: "🏖️",
+    coords: [39.3842, -0.3217],
+    description: "Rustig strand in natuurpark. Waar Valencianen heen gaan om drukte te ontlopen.",
+    localTip: "Combineer met zonsondergang bij Albufera!",
+    maps: "https://maps.google.com/?q=Playa+del+Saler+Valencia"
+  },
+  {
+    name: "Ubik Café",
+    category: "drinken",
+    neighborhood: "Ruzafa",
+    emoji: "📚",
+    coords: [39.4612, -0.3728],
+    description: "Boekenwinkel + café. Hippe plek om te werken of mensen te kijken.",
+    localTip: "Probeer hun carrot cake, beste van de stad.",
+    maps: "https://maps.google.com/?q=Ubik+Cafe+Valencia"
+  },
+  {
+    name: "La Fábrica de Hielo",
+    category: "drinken",
+    neighborhood: "Cabanyal",
+    emoji: "🎤",
+    coords: [39.4698, -0.3272],
+    description: "Oude ijsfabriek nu cultureel centrum. Live muziek, expo's, en chill terras.",
+    localTip: "Check hun agenda voor concerten!",
+    maps: "https://maps.google.com/?q=La+Fabrica+de+Hielo+Valencia"
+  },
+  {
+    name: "Dulce de Leche",
+    category: "eten",
+    neighborhood: "Ruzafa",
+    emoji: "🥐",
+    coords: [39.4615, -0.3742],
+    description: "Argentijnse bakkerij met ongelooflijke croissants en medialunas.",
+    localTip: "Neem alfajores mee als souvenir!",
+    maps: "https://maps.google.com/?q=Dulce+de+Leche+Ruzafa+Valencia"
+  },
+  {
+    name: "Street Art Route Cabanyal",
+    category: "cultuur",
+    neighborhood: "Cabanyal",
+    emoji: "🎨",
+    coords: [39.4695, -0.3258],
+    description: "Kleurrijke straatkunst door de hele vissersbuurt. Elke straat is anders.",
+    localTip: "Loop via Calle de la Reina richting strand.",
+    maps: "https://maps.google.com/?q=Cabanyal+Valencia"
+  },
+  {
+    name: "Nou Racó",
+    category: "eten",
+    neighborhood: "Albufera",
+    emoji: "🥘",
+    coords: [39.3523, -0.3542],
+    description: "Paella restaurant midden in de rijstvelden. Hier leren chefs paella maken.",
+    localTip: "Reserveer en vraag om tafel met uitzicht op het water.",
+    maps: "https://maps.google.com/?q=Nou+Raco+Palmar+Valencia"
+  }
+];
+
+// Render gems
+function renderGems(filter = 'all') {
+  const container = document.getElementById('gems-list');
+  const filtered = filter === 'all' ? hiddenGems : hiddenGems.filter(g => g.category === filter);
+
+  container.innerHTML = filtered.map((gem, idx) => `
+    <div class="gem-card" data-idx="${idx}" data-category="${gem.category}">
+      <span class="gem-category-badge ${gem.category}">${gem.category}</span>
+      <div class="gem-image">${gem.emoji}</div>
+      <div class="gem-content">
+        <div class="gem-name">${gem.name}</div>
+        <div class="gem-neighborhood">📍 ${gem.neighborhood}</div>
+        <div class="gem-description">${gem.description}</div>
+        <div class="gem-local-tip">💬 "${gem.localTip}"</div>
+        <div class="gem-actions">
+          <a href="${gem.maps}" target="_blank" class="gem-btn gem-btn-maps" onclick="event.stopPropagation();">📍 Google Maps</a>
+          <button class="gem-btn gem-btn-save" onclick="toggleSave(event, '${gem.name}')">♡ Bewaar</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  // Add click handlers to show on map
+  document.querySelectorAll('.gem-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const idx = parseInt(card.dataset.idx);
+      const gem = filter === 'all' ? hiddenGems[idx] : filtered[idx];
+      showOnMap(gem);
+    });
+  });
+}
+
+// Filter buttons
+document.querySelectorAll('.gem-filter').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.gem-filter').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderGems(btn.dataset.filter);
+  });
+});
+
+// Show gem on main map
+function showOnMap(gem) {
+  map.setView(gem.coords, 16);
+  L.popup()
+    .setLatLng(gem.coords)
+    .setContent(`<strong>${gem.emoji} ${gem.name}</strong><br><small>${gem.localTip}</small>`)
+    .openOn(map);
+
+  // Scroll map into view
+  document.getElementById('map').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+// Surprise me button
+function surpriseMe() {
+  const randomGem = hiddenGems[Math.floor(Math.random() * hiddenGems.length)];
+
+  // Reset filter to all
+  document.querySelectorAll('.gem-filter').forEach(b => b.classList.remove('active'));
+  document.querySelector('.gem-filter[data-filter="all"]').classList.add('active');
+  renderGems('all');
+
+  // Find and highlight the card
+  setTimeout(() => {
+    const cards = document.querySelectorAll('.gem-card');
+    const targetCard = Array.from(cards).find(c => {
+      const idx = parseInt(c.dataset.idx);
+      return hiddenGems[idx].name === randomGem.name;
+    });
+
+    if (targetCard) {
+      targetCard.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+      targetCard.classList.add('highlighted');
+      setTimeout(() => targetCard.classList.remove('highlighted'), 2000);
+
+      // Show on map
+      showOnMap(randomGem);
+    }
+  }, 100);
+}
+
+// Save/unsave functionality
+function toggleSave(event, gemName) {
+  event.stopPropagation();
+  const btn = event.target;
+  btn.classList.toggle('saved');
+  btn.textContent = btn.classList.contains('saved') ? '♥ Bewaard!' : '♡ Bewaar';
+}
+
+// Initial render
+renderGems();
+
+// ============ PACKING LIST ============
+document.querySelectorAll('.pack-item input[type="checkbox"]').forEach(checkbox => {
+  // Load saved state
+  const saved = localStorage.getItem('pack_' + checkbox.id);
+  if (saved === 'true') {
+    checkbox.checked = true;
+    checkbox.parentElement.classList.add('checked');
+  }
+
+  // Save on change
+  checkbox.addEventListener('change', (e) => {
+    localStorage.setItem('pack_' + checkbox.id, checkbox.checked);
+    if (checkbox.checked) {
+      checkbox.parentElement.classList.add('checked');
+    } else {
+      checkbox.parentElement.classList.remove('checked');
+    }
+  });
+});
+
+// ============ PHOTO SPOTS ============
+function showPhotoSpot(coords, name) {
+  map.setView(coords, 17);
+  L.popup()
+    .setLatLng(coords)
+    .setContent(`<strong>📸 ${name}</strong><br><small>Foto spot!</small>`)
+    .openOn(map);
+  document.getElementById('map').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+</script>
+</body>
+</html>
