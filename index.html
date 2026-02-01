@@ -58,7 +58,7 @@
   .header .subtitle { font-size: clamp(0.9rem, 3vw, 1.1rem); opacity: 0.95; font-weight: 300; }
 
   /* Grid Layout */
-  .main-grid { display: grid; grid-template-columns: 1fr 360px; gap: 20px; }
+  .main-grid { display: grid; grid-template-columns: 1fr 340px; gap: 16px; }
 
   /* Cards */
   .card {
@@ -109,7 +109,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 16px;
-    background: var(--bg-light);
+    background: #f8f9fa;
     border-radius: var(--radius-sm);
     cursor: pointer;
     transition: background var(--transition);
@@ -169,32 +169,33 @@
 
   /* Day Cards - now inside collapsible */
   .day-card {
-    background: var(--bg-light);
+    background: #ffffff;
     border-radius: var(--radius-sm);
-    margin-bottom: 12px;
+    margin-bottom: 10px;
     border-left: 4px solid;
     overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
   }
-  .day-card.friday { border-color: var(--primary); }
-  .day-card.saturday { border-color: var(--secondary); }
-  .day-card.sunday { border-color: var(--accent); }
-  .day-card.monday { border-color: var(--purple); }
+  .day-card.friday { border-color: var(--primary); background: linear-gradient(135deg, #fff5f2 0%, #ffffff 100%); }
+  .day-card.saturday { border-color: var(--secondary); background: linear-gradient(135deg, #fff8f0 0%, #ffffff 100%); }
+  .day-card.sunday { border-color: var(--accent); background: linear-gradient(135deg, #fffdf0 0%, #ffffff 100%); }
+  .day-card.monday { border-color: var(--purple); background: linear-gradient(135deg, #f5f3ff 0%, #ffffff 100%); }
 
   .day-header {
     display: flex;
     align-items: center;
     gap: 12px;
     cursor: pointer;
-    padding: 16px;
-    min-height: 60px;
+    padding: 14px 16px;
+    min-height: 54px;
   }
-  .day-emoji { font-size: 1.4rem; }
-  .day-title { font-weight: 600; font-size: 1rem; color: var(--text); }
-  .day-subtitle { font-size: 0.75rem; color: var(--text-muted); font-weight: 400; margin-top: 2px; }
+  .day-emoji { font-size: 1.3rem; }
+  .day-title { font-weight: 600; font-size: 1rem; color: #333; }
+  .day-subtitle { font-size: 0.75rem; color: #666; font-weight: 400; margin-top: 2px; }
   .day-arrow {
     margin-left: auto;
-    font-size: 0.75rem;
-    color: var(--text-muted);
+    font-size: 0.7rem;
+    color: #999;
     transition: transform var(--transition);
   }
   .day-card.open .day-arrow { transform: rotate(180deg); }
@@ -230,16 +231,14 @@
 
   /* Itinerary Section */
   .itinerary-section {
-    background: var(--white);
-    border-radius: var(--radius);
-    padding: 20px;
-    box-shadow: var(--shadow-lg);
+    background: transparent;
+    padding: 0;
   }
 
   .itinerary-section .section-title {
-    color: var(--text) !important;
-    text-shadow: none !important;
-    margin-bottom: 16px;
+    color: #fff !important;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+    margin-bottom: 12px;
   }
 
   #map { height: 280px; border-radius: var(--radius-sm); z-index: 1; }
@@ -982,14 +981,6 @@
 
     .gem-card {
       flex: 0 0 220px;
-    }
-  }
-
-  /* Dark mode support */
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg-light: #1a1a1a;
-      --border: #333;
     }
   }
 
