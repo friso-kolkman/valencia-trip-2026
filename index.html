@@ -1619,19 +1619,18 @@ const natureIcon = createIcon('#27ae60');
 // Add markers
 const locations = [
   { coords: [39.4705, -0.3742], name: 'ESTIMAR Valencia (Hotel)', icon: hotelIcon },
-  { coords: [39.4737, -0.3757], name: 'Plaza de la Virgen', icon: cultureIcon },
-  { coords: [39.4743, -0.3787], name: 'Mercado Central', icon: cultureIcon },
-  { coords: [39.4741, -0.3793], name: 'La Lonja de la Seda', icon: cultureIcon },
+  { coords: [39.4762, -0.3756], name: 'Plaza de la Virgen', icon: cultureIcon },
+  { coords: [39.4735, -0.3785], name: 'Mercado Central', icon: cultureIcon },
+  { coords: [39.4738, -0.3796], name: 'La Lonja de la Seda', icon: cultureIcon },
   { coords: [39.4752, -0.3754], name: 'Valencia Cathedral', icon: cultureIcon },
-  { coords: [39.4542, -0.3507], name: 'City of Arts & Sciences', icon: cultureIcon },
-  { coords: [39.4662, -0.3263], name: 'Casa Carmela (Paella)', icon: foodIcon },
-  { coords: [39.4731, -0.3685], name: 'Casa Montaña', icon: foodIcon },
-  { coords: [39.4631, -0.3733], name: 'Ruzafa (Dining)', icon: foodIcon },
-  { coords: [39.4785, -0.3812], name: 'Barrio del Carmen', icon: nightlifeIcon },
-  { coords: [39.4721, -0.3752], name: 'Ateneo Sky Bar', icon: nightlifeIcon },
-  { coords: [39.4799, -0.3623], name: 'Turia Gardens', icon: natureIcon },
-  { coords: [39.4728, -0.3251], name: 'Malvarrosa Beach', icon: natureIcon },
-  { coords: [39.4692, -0.3244], name: 'Cabanyal', icon: natureIcon }
+  { coords: [39.4531, -0.3511], name: 'City of Arts & Sciences', icon: cultureIcon },
+  { coords: [39.4822, -0.3258], name: 'Casa Carmela (Paella)', icon: foodIcon },
+  { coords: [39.4627, -0.3735], name: 'Ruzafa (Dining)', icon: foodIcon },
+  { coords: [39.4790, -0.3790], name: 'Barrio del Carmen', icon: nightlifeIcon },
+  { coords: [39.4699, -0.3763], name: 'Ateneo Sky Bar', icon: nightlifeIcon },
+  { coords: [39.4780, -0.3650], name: 'Turia Gardens', icon: natureIcon },
+  { coords: [39.4793, -0.3236], name: 'Malvarrosa Beach', icon: natureIcon },
+  { coords: [39.4695, -0.3270], name: 'Cabanyal', icon: natureIcon }
 ];
 
 locations.forEach(loc => {
@@ -2145,15 +2144,15 @@ const routes = {
     name: 'Vrijdag',
     points: [
       hotelCoords,
-      [39.4737, -0.3757], // Plaza de la Virgen
-      [39.4752, -0.3754], // Plaza de la Reina / Cathedral
-      [39.4770, -0.3780], // El Carmen area (tapas)
-      [39.4785, -0.3812], // Barrio del Carmen (nightlife)
+      [39.4762, -0.3756], // Plaza de la Virgen
+      [39.4752, -0.3754], // Cathedral area
+      [39.4775, -0.3785], // El Carmen area (tapas)
+      [39.4790, -0.3790], // Barrio del Carmen (nightlife)
     ],
     stops: [
-      { coords: [39.4737, -0.3757], name: 'Plaza de la Virgen', time: '19:00' },
-      { coords: [39.4770, -0.3780], name: 'Tapas in El Carmen', time: '21:00' },
-      { coords: [39.4785, -0.3812], name: 'Barrio del Carmen', time: '23:00' },
+      { coords: [39.4762, -0.3756], name: 'Plaza de la Virgen', time: '19:00' },
+      { coords: [39.4775, -0.3785], name: 'Tapas in El Carmen', time: '21:00' },
+      { coords: [39.4790, -0.3790], name: 'Barrio del Carmen', time: '23:00' },
     ]
   },
   saturday: {
@@ -2161,20 +2160,20 @@ const routes = {
     name: 'Zaterdag',
     points: [
       hotelCoords,
-      [39.4743, -0.3787], // Mercado Central
-      [39.4741, -0.3793], // La Lonja
+      [39.4735, -0.3785], // Mercado Central
+      [39.4738, -0.3796], // La Lonja
       [39.4752, -0.3754], // Cathedral
-      [39.4745, -0.3765], // Lunch old town
-      [39.4542, -0.3507], // City of Arts & Sciences
-      [39.4631, -0.3733], // Ruzafa
+      [39.4745, -0.3770], // Lunch old town
+      [39.4531, -0.3511], // City of Arts & Sciences
+      [39.4627, -0.3735], // Ruzafa
     ],
     stops: [
-      { coords: [39.4743, -0.3787], name: 'Mercado Central', time: '09:00' },
-      { coords: [39.4741, -0.3793], name: 'La Lonja de la Seda', time: '11:00' },
+      { coords: [39.4735, -0.3785], name: 'Mercado Central', time: '09:00' },
+      { coords: [39.4738, -0.3796], name: 'La Lonja de la Seda', time: '11:00' },
       { coords: [39.4752, -0.3754], name: 'Kathedraal', time: '12:00' },
-      { coords: [39.4745, -0.3765], name: 'Lunch oude centrum', time: '14:00' },
-      { coords: [39.4542, -0.3507], name: 'Stad van Kunsten', time: '16:30' },
-      { coords: [39.4631, -0.3733], name: 'Ruzafa', time: '21:00' },
+      { coords: [39.4745, -0.3770], name: 'Lunch oude centrum', time: '14:00' },
+      { coords: [39.4531, -0.3511], name: 'Stad van Kunsten', time: '16:30' },
+      { coords: [39.4627, -0.3735], name: 'Ruzafa', time: '21:00' },
     ]
   },
   sunday: {
@@ -2182,20 +2181,20 @@ const routes = {
     name: 'Zondag',
     points: [
       hotelCoords,
-      [39.4799, -0.3623], // Turia Park
-      [39.4695, -0.3258], // Cabanyal
-      [39.4662, -0.3263], // Casa Carmela
-      [39.4728, -0.3251], // Malvarrosa Beach
-      [39.4721, -0.3752], // Ateneo Sky Bar
-      [39.4785, -0.3812], // El Carmen
+      [39.4780, -0.3650], // Turia Park
+      [39.4695, -0.3270], // Cabanyal
+      [39.4822, -0.3258], // Casa Carmela
+      [39.4793, -0.3236], // Malvarrosa Beach
+      [39.4699, -0.3763], // Ateneo Sky Bar
+      [39.4790, -0.3790], // El Carmen
     ],
     stops: [
-      { coords: [39.4799, -0.3623], name: 'Turia Park', time: '10:00' },
-      { coords: [39.4695, -0.3258], name: 'Cabanyal (street art)', time: '12:00' },
-      { coords: [39.4662, -0.3263], name: 'Casa Carmela (Paella!)', time: '14:00' },
-      { coords: [39.4728, -0.3251], name: 'Malvarrosa Strand', time: '16:30' },
-      { coords: [39.4721, -0.3752], name: 'Ateneo Sky Bar', time: '19:00' },
-      { coords: [39.4785, -0.3812], name: 'El Carmen', time: '22:00' },
+      { coords: [39.4780, -0.3650], name: 'Turia Park', time: '10:00' },
+      { coords: [39.4695, -0.3270], name: 'Cabanyal (street art)', time: '12:00' },
+      { coords: [39.4822, -0.3258], name: 'Casa Carmela (Paella!)', time: '14:00' },
+      { coords: [39.4793, -0.3236], name: 'Malvarrosa Strand', time: '16:30' },
+      { coords: [39.4699, -0.3763], name: 'Ateneo Sky Bar', time: '19:00' },
+      { coords: [39.4790, -0.3790], name: 'El Carmen', time: '22:00' },
     ]
   },
   monday: {
@@ -2204,12 +2203,12 @@ const routes = {
     points: [
       hotelCoords,
       [39.4720, -0.3760], // Bluebell Coffee area
-      [39.4743, -0.3787], // Walking/souvenirs near Mercado
-      [39.4905, -0.4730], // Airport direction (simplified)
+      [39.4735, -0.3785], // Walking/souvenirs near Mercado
+      [39.4620, -0.4820], // Airport
     ],
     stops: [
       { coords: [39.4720, -0.3760], name: 'Bluebell Coffee', time: '10:00' },
-      { coords: [39.4743, -0.3787], name: 'Souvenirs', time: '11:30' },
+      { coords: [39.4735, -0.3785], name: 'Souvenirs', time: '11:30' },
     ]
   }
 };
