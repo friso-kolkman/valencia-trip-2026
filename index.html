@@ -803,6 +803,79 @@
     border-color: #27ae60;
   }
 
+  /* Route Map Section */
+  .route-section {
+    margin-top: 25px;
+    margin-bottom: 20px;
+  }
+
+  .route-card {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+  }
+
+  #route-map {
+    height: 400px;
+    border-radius: 12px;
+    z-index: 1;
+    margin-bottom: 16px;
+  }
+
+  .route-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 16px;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 10px;
+  }
+
+  .route-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: #444;
+  }
+
+  .route-line {
+    width: 24px;
+    height: 4px;
+    border-radius: 2px;
+  }
+
+  .route-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .route-btn {
+    padding: 10px 18px;
+    border: 2px solid #ddd;
+    background: white;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #555;
+    transition: all 0.2s;
+  }
+
+  .route-btn:hover {
+    border-color: var(--btn-color, #ff6b35);
+    color: var(--btn-color, #ff6b35);
+  }
+
+  .route-btn.active {
+    background: var(--btn-color, #ff6b35);
+    border-color: var(--btn-color, #ff6b35);
+    color: white;
+  }
+
   /* ============ RESPONSIVE MEDIA QUERIES ============ */
 
   /* Tablet and below */
@@ -837,6 +910,32 @@
     body {
       padding: 12px;
       padding-bottom: calc(70px + var(--safe-bottom));
+    }
+
+    #route-map {
+      height: 300px;
+    }
+
+    .route-legend {
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .route-legend-item {
+      font-size: 0.8rem;
+    }
+
+    .route-buttons {
+      overflow-x: auto;
+      flex-wrap: nowrap;
+      padding-bottom: 8px;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .route-btn {
+      white-space: nowrap;
+      padding: 8px 14px;
+      font-size: 0.8rem;
     }
 
     .header h1 {
@@ -1434,6 +1533,39 @@
 
   </div>
 
+  <!-- Route Map Section -->
+  <div class="route-section">
+    <h2 class="section-title" style="color:white;text-shadow:1px 1px 3px rgba(0,0,0,0.2);margin-bottom:16px;">🗺️ Onze Route per Dag</h2>
+    <div class="route-card">
+      <div id="route-map"></div>
+      <div class="route-legend">
+        <div class="route-legend-item">
+          <span class="route-line" style="background:#e74c3c;"></span>
+          <span>Vrijdag — Aankomst & avondwandeling</span>
+        </div>
+        <div class="route-legend-item">
+          <span class="route-line" style="background:#3498db;"></span>
+          <span>Zaterdag — Cultuur & bezienswaardigheden</span>
+        </div>
+        <div class="route-legend-item">
+          <span class="route-line" style="background:#27ae60;"></span>
+          <span>Zondag — Strand & parken</span>
+        </div>
+        <div class="route-legend-item">
+          <span class="route-line" style="background:#9b59b6;"></span>
+          <span>Maandag — Brunch & vertrek</span>
+        </div>
+      </div>
+      <div class="route-buttons">
+        <button class="route-btn active" data-day="all">Alle dagen</button>
+        <button class="route-btn" data-day="friday" style="--btn-color:#e74c3c;">Vrijdag</button>
+        <button class="route-btn" data-day="saturday" style="--btn-color:#3498db;">Zaterdag</button>
+        <button class="route-btn" data-day="sunday" style="--btn-color:#27ae60;">Zondag</button>
+        <button class="route-btn" data-day="monday" style="--btn-color:#9b59b6;">Maandag</button>
+      </div>
+    </div>
+  </div>
+
   <div class="footer">Gemaakt met ❤️ voor jullie Valencia avontuur</div>
 </div>
 
@@ -1991,6 +2123,157 @@ document.querySelectorAll('.day-header, .gem-filter, .surprise-btn, .gem-btn, .n
     e.preventDefault();
     el.click();
   }, { passive: false });
+});
+
+// ============ ROUTE MAP ============
+const routeMap = L.map('route-map').setView([39.4650, -0.3550], 13);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '© OpenStreetMap'
+}).addTo(routeMap);
+
+// Hotel marker (start point for all routes)
+const hotelCoords = [39.4705, -0.3742];
+L.marker(hotelCoords, { icon: hotelIcon })
+  .addTo(routeMap)
+  .bindPopup('<strong>🏨 ESTIMAR Valencia</strong><br>Jullie hotel');
+
+// Route definitions per day
+const routes = {
+  friday: {
+    color: '#e74c3c',
+    name: 'Vrijdag',
+    points: [
+      hotelCoords,
+      [39.4737, -0.3757], // Plaza de la Virgen
+      [39.4752, -0.3754], // Plaza de la Reina / Cathedral
+      [39.4770, -0.3780], // El Carmen area (tapas)
+      [39.4785, -0.3812], // Barrio del Carmen (nightlife)
+    ],
+    stops: [
+      { coords: [39.4737, -0.3757], name: 'Plaza de la Virgen', time: '19:00' },
+      { coords: [39.4770, -0.3780], name: 'Tapas in El Carmen', time: '21:00' },
+      { coords: [39.4785, -0.3812], name: 'Barrio del Carmen', time: '23:00' },
+    ]
+  },
+  saturday: {
+    color: '#3498db',
+    name: 'Zaterdag',
+    points: [
+      hotelCoords,
+      [39.4743, -0.3787], // Mercado Central
+      [39.4741, -0.3793], // La Lonja
+      [39.4752, -0.3754], // Cathedral
+      [39.4662, -0.3263], // Casa Carmela
+      [39.4542, -0.3507], // City of Arts & Sciences
+      [39.4631, -0.3733], // Ruzafa
+    ],
+    stops: [
+      { coords: [39.4743, -0.3787], name: 'Mercado Central', time: '09:00' },
+      { coords: [39.4741, -0.3793], name: 'La Lonja de la Seda', time: '11:00' },
+      { coords: [39.4752, -0.3754], name: 'Kathedraal', time: '12:00' },
+      { coords: [39.4662, -0.3263], name: 'Casa Carmela (Paella)', time: '14:00' },
+      { coords: [39.4542, -0.3507], name: 'Stad van Kunsten', time: '17:00' },
+      { coords: [39.4631, -0.3733], name: 'Ruzafa', time: '21:00' },
+    ]
+  },
+  sunday: {
+    color: '#27ae60',
+    name: 'Zondag',
+    points: [
+      hotelCoords,
+      [39.4799, -0.3623], // Turia Park
+      [39.4695, -0.3258], // Cabanyal
+      [39.4731, -0.3685], // Casa Montaña
+      [39.4728, -0.3251], // Malvarrosa Beach
+      [39.4721, -0.3752], // Ateneo Sky Bar
+      [39.4785, -0.3812], // El Carmen
+    ],
+    stops: [
+      { coords: [39.4799, -0.3623], name: 'Turia Park', time: '10:00' },
+      { coords: [39.4695, -0.3258], name: 'Cabanyal', time: '12:00' },
+      { coords: [39.4731, -0.3685], name: 'Casa Montaña', time: '14:00' },
+      { coords: [39.4728, -0.3251], name: 'Malvarrosa Strand', time: '16:00' },
+      { coords: [39.4721, -0.3752], name: 'Ateneo Sky Bar', time: '19:00' },
+      { coords: [39.4785, -0.3812], name: 'El Carmen', time: '22:00' },
+    ]
+  },
+  monday: {
+    color: '#9b59b6',
+    name: 'Maandag',
+    points: [
+      hotelCoords,
+      [39.4720, -0.3760], // Bluebell Coffee area
+      [39.4743, -0.3787], // Walking/souvenirs near Mercado
+      [39.4905, -0.4730], // Airport direction (simplified)
+    ],
+    stops: [
+      { coords: [39.4720, -0.3760], name: 'Bluebell Coffee', time: '10:00' },
+      { coords: [39.4743, -0.3787], name: 'Souvenirs', time: '11:30' },
+    ]
+  }
+};
+
+// Store polylines and markers for toggling
+const routeLayers = {};
+
+// Create polylines and stop markers for each day
+Object.keys(routes).forEach(day => {
+  const route = routes[day];
+  routeLayers[day] = {
+    line: L.polyline(route.points, {
+      color: route.color,
+      weight: 4,
+      opacity: 0.8,
+      smoothFactor: 1
+    }),
+    markers: route.stops.map((stop, idx) => {
+      const marker = L.circleMarker(stop.coords, {
+        radius: 8,
+        fillColor: route.color,
+        color: '#fff',
+        weight: 2,
+        fillOpacity: 0.9
+      }).bindPopup(`<strong>${stop.time}</strong><br>${stop.name}`);
+      return marker;
+    })
+  };
+});
+
+// Show all routes by default
+function showRoute(day) {
+  if (day === 'all') {
+    Object.keys(routeLayers).forEach(d => {
+      routeLayers[d].line.addTo(routeMap);
+      routeLayers[d].markers.forEach(m => m.addTo(routeMap));
+    });
+    routeMap.fitBounds([
+      [39.44, -0.48],
+      [39.50, -0.32]
+    ]);
+  } else {
+    // Hide all first
+    Object.keys(routeLayers).forEach(d => {
+      routeMap.removeLayer(routeLayers[d].line);
+      routeLayers[d].markers.forEach(m => routeMap.removeLayer(m));
+    });
+    // Show selected
+    routeLayers[day].line.addTo(routeMap);
+    routeLayers[day].markers.forEach(m => m.addTo(routeMap));
+    routeMap.fitBounds(routeLayers[day].line.getBounds().pad(0.2));
+  }
+}
+
+// Initialize with all routes
+showRoute('all');
+
+// Button click handlers
+document.querySelectorAll('.route-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.route-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    showRoute(btn.dataset.day);
+  });
 });
 </script>
 </body>
