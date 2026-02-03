@@ -1171,9 +1171,9 @@
             <li><span class="activity-time">09:00</span> Mercado Central — vers sap & jamón</li>
             <li><span class="activity-time">11:00</span> La Lonja de la Seda (UNESCO erfgoed)</li>
             <li><span class="activity-time">12:00</span> Kathedraal van Valencia + Miguelete Toren</li>
-            <li><span class="activity-time">14:00</span> Lunch in oude centrum (tapas bij El Poblet of La Riuà)</li>
+            <li><span class="activity-time">14:00</span> Lunch in oude centrum (tapas bij Las Cuevas!)</li>
             <li><span class="activity-time">16:30</span> Stad van Kunsten en Wetenschappen</li>
-            <li><span class="activity-time">21:00</span> Diner & uitgaan in Ruzafa</li>
+            <li><span class="activity-time">21:00</span> Diner in Ruzafa, daarna L'Umbracle! 🎉</li>
           </ul>
         </div>
       </div>
@@ -1188,7 +1188,7 @@
           <ul class="activity-list">
             <li><span class="activity-time">10:00</span> Fietsen door Turia Park richting strand</li>
             <li><span class="activity-time">12:00</span> Verkennen van wijk Cabanyal (street art)</li>
-            <li><span class="activity-time">14:00</span> Authentieke paella bij Casa Carmela 🥘</li>
+            <li><span class="activity-time">14:00</span> Lunch bij La más bonita (strand) 🏖️</li>
             <li><span class="activity-time">16:30</span> Relaxen op Malvarrosa strand</li>
             <li><span class="activity-time">19:00</span> Rooftop drankjes bij Ateneo Sky Bar</li>
             <li><span class="activity-time">22:00</span> Uitgaan in El Carmen</li>
@@ -1488,11 +1488,19 @@
     <div class="info-card">
       <h3>🔗 Reserveren & Boeken</h3>
       <div class="transport-item">
-        <span class="transport-icon">🥘</span>
+        <span class="transport-icon">🏖️</span>
         <div class="transport-info">
-          <div class="transport-title">Casa Carmela (Paella)</div>
-          <div class="transport-detail">Reserveren aanbevolen voor weekend!</div>
-          <a href="tel:+34963710073" style="font-size:0.85rem;color:#4285f4;">📞 +34 963 71 00 73</a>
+          <div class="transport-title">La más bonita (Strand)</div>
+          <div class="transport-detail">Lekkere lunch aan het strand - zondag!</div>
+          <a href="https://maps.google.com/?q=La+mas+bonita+Valencia" style="font-size:0.85rem;color:#4285f4;">📍 Google Maps</a>
+        </div>
+      </div>
+      <div class="transport-item">
+        <span class="transport-icon">🍷</span>
+        <div class="transport-info">
+          <div class="transport-title">Las Cuevas (Tapas)</div>
+          <div class="transport-detail">Beste tapas! Reserveer 1 week vooruit.</div>
+          <a href="tel:+34963917196" style="font-size:0.85rem;color:#4285f4;">📞 +34 963 917 196</a>
         </div>
       </div>
       <div class="transport-item">
@@ -1614,7 +1622,8 @@ const locations = [
   { coords: [39.4738, -0.3796], name: 'La Lonja de la Seda', icon: cultureIcon },
   { coords: [39.4752, -0.3754], name: 'Valencia Cathedral', icon: cultureIcon },
   { coords: [39.4531, -0.3511], name: 'City of Arts & Sciences', icon: cultureIcon },
-  { coords: [39.4822, -0.3258], name: 'Casa Carmela (Paella)', icon: foodIcon },
+  { coords: [39.4810, -0.3230], name: 'La más bonita (Strand)', icon: foodIcon },
+  { coords: [39.4531, -0.3511], name: "L'Umbracle (Nightlife)", icon: nightlifeIcon },
   { coords: [39.4627, -0.3735], name: 'Ruzafa (Dining)', icon: foodIcon },
   { coords: [39.4790, -0.3790], name: 'Barrio del Carmen', icon: nightlifeIcon },
   { coords: [39.4699, -0.3763], name: 'Ateneo Sky Bar', icon: nightlifeIcon },
@@ -1924,6 +1933,56 @@ const hiddenGems = [
     description: "Paella restaurant midden in de rijstvelden. Hier leren chefs paella maken.",
     localTip: "Reserveer en vraag om tafel met uitzicht op het water.",
     maps: "https://maps.google.com/?q=Nou+Raco+Palmar+Valencia"
+  },
+  {
+    name: "Las Cuevas",
+    category: "eten",
+    neighborhood: "Ciutat Vella",
+    emoji: "🍤",
+    coords: [39.4743, -0.3778],
+    description: "Authentieke tapasbar in grotten! Zit in oude kelders met lage plafonds. Mega lekker!",
+    localTip: "Reserveer minstens een week vooruit - heel populair!",
+    maps: "https://maps.google.com/?q=Las+Cuevas+Valencia+Plaza+Cisneros"
+  },
+  {
+    name: "L'Umbracle",
+    category: "drinken",
+    neighborhood: "City of Arts",
+    emoji: "🎉",
+    coords: [39.4540, -0.3505],
+    description: "DÉ nightclub van Valencia! Terras met uitzicht op City of Arts & Sciences. Must go!",
+    localTip: "Dress code: jurkjes & hakken. Je moet gekleed zijn!",
+    maps: "https://maps.google.com/?q=L'Umbracle+Valencia"
+  },
+  {
+    name: "La más bonita",
+    category: "eten",
+    neighborhood: "Malvarrosa",
+    emoji: "🏖️",
+    coords: [39.4810, -0.3230],
+    description: "Prachtig strandrestaurant met heerlijke lunch. Perfecte sfeer en lekkere kaarten!",
+    localTip: "Ideaal voor een relaxte zondaglunch aan zee.",
+    maps: "https://maps.google.com/?q=La+mas+bonita+Valencia"
+  },
+  {
+    name: "Plaza del Negret",
+    category: "drinken",
+    neighborhood: "El Carmen",
+    emoji: "🍻",
+    coords: [39.4775, -0.3792],
+    description: "Klein gezellig pleintje met leuke terrasjes. Perfecte plek voor drankjes!",
+    localTip: "Locals tip: ideaal voor pre-dinner drinks.",
+    maps: "https://maps.google.com/?q=Plaza+del+Negret+Valencia"
+  },
+  {
+    name: "La Pappardella",
+    category: "eten",
+    neighborhood: "Ciutat Vella",
+    emoji: "🍝",
+    coords: [39.4748, -0.3765],
+    description: "Mega lekker Italiaans restaurant. Betaalbaar en heerlijke toetjes!",
+    localTip: "Locals gaan hier vaak eten - niet duur maar super lekker.",
+    maps: "https://maps.google.com/?q=La+Pappardella+Valencia"
   }
 ];
 
@@ -2153,17 +2212,19 @@ const routes = {
       [39.4735, -0.3785], // Mercado Central
       [39.4738, -0.3796], // La Lonja
       [39.4752, -0.3754], // Cathedral
-      [39.4745, -0.3770], // Lunch old town
+      [39.4743, -0.3778], // Las Cuevas (Lunch)
       [39.4531, -0.3511], // City of Arts & Sciences
       [39.4627, -0.3735], // Ruzafa
+      [39.4540, -0.3505], // L'Umbracle
     ],
     stops: [
       { coords: [39.4735, -0.3785], name: 'Mercado Central', time: '09:00' },
       { coords: [39.4738, -0.3796], name: 'La Lonja de la Seda', time: '11:00' },
       { coords: [39.4752, -0.3754], name: 'Kathedraal', time: '12:00' },
-      { coords: [39.4745, -0.3770], name: 'Lunch oude centrum', time: '14:00' },
+      { coords: [39.4743, -0.3778], name: 'Las Cuevas (Tapas!)', time: '14:00' },
       { coords: [39.4531, -0.3511], name: 'Stad van Kunsten', time: '16:30' },
-      { coords: [39.4627, -0.3735], name: 'Ruzafa', time: '21:00' },
+      { coords: [39.4627, -0.3735], name: 'Ruzafa (Diner)', time: '21:00' },
+      { coords: [39.4540, -0.3505], name: "L'Umbracle (Uitgaan!)", time: '23:30' },
     ]
   },
   sunday: {
@@ -2173,7 +2234,7 @@ const routes = {
       hotelCoords,
       [39.4780, -0.3650], // Turia Park
       [39.4695, -0.3270], // Cabanyal
-      [39.4822, -0.3258], // Casa Carmela
+      [39.4810, -0.3230], // La más bonita
       [39.4793, -0.3236], // Malvarrosa Beach
       [39.4699, -0.3763], // Ateneo Sky Bar
       [39.4790, -0.3790], // El Carmen
@@ -2181,7 +2242,7 @@ const routes = {
     stops: [
       { coords: [39.4780, -0.3650], name: 'Turia Park', time: '10:00' },
       { coords: [39.4695, -0.3270], name: 'Cabanyal (street art)', time: '12:00' },
-      { coords: [39.4822, -0.3258], name: 'Casa Carmela (Paella!)', time: '14:00' },
+      { coords: [39.4810, -0.3230], name: 'La más bonita (Lunch)', time: '14:00' },
       { coords: [39.4793, -0.3236], name: 'Malvarrosa Strand', time: '16:30' },
       { coords: [39.4699, -0.3763], name: 'Ateneo Sky Bar', time: '19:00' },
       { coords: [39.4790, -0.3790], name: 'El Carmen', time: '22:00' },
